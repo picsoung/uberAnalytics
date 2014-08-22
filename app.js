@@ -15,6 +15,25 @@ db.points = new Datastore({ filename: 'db/points', autoload: true });
 db.routes = new Datastore({ filename: 'db/routes', autoload: true });
 db.prices = new Datastore({ filename: 'db/prices', autoload: true });
 
+var routes =[{start:"lax", end:"dtla"},{start:"dtla", end:"lax"},
+ {start:"lax", end:"sm"},{start:"sm", end:"lax"},
+ {start:"lax", end:"hwd"},{start:"hwd", end:"lax"},
+ {start:"dtla", end:"sm"},{start:"sm", end:"dtla"},
+ {start:"dtla", end:"hwd"},{start:"hwd", end:"dtla"},
+ {start:"sm", end:"hwd"},{start:"sm", end:"lax"},
+ {start:"jfk", end:"gct"},{start:"gct", end:"jfk"},
+ {start:"jfk", end:"aaal"},{start:"aaal", end:"jfk"},
+ {start:"jfk", end:"brky"},{start:"brky", end:"jfk"},
+ {start:"gct", end:"aaal"},{start:"aaal", end:"gct"},
+ {start:"gct", end:"brky"},{start:"brky", end:"gct"},
+ {start:"aaal", end:"brky"},{start:"aaal", end:"jfk"},
+ {start:"sfo", end:"acs"},{start:"acs", end:"sfo"},
+ {start:"sfo", end:"pwll"},{start:"pwll", end:"sfo"},
+ {start:"sfo", end:"warf"},{start:"warf", end:"sfo"},
+ {start:"acs", end:"pwll"},{start:"pwll", end:"acs"},
+ {start:"acs", end:"warf"},{start:"warf", end:"acs"},
+ {start:"pwll", end:"warf"},{start:"pwll", end:"sfo"}]
+
 app.get('/',function(req, res){
   res.render('index');  
 });
@@ -58,6 +77,12 @@ app.get('/point/:slug',function(req,res){
 	})
 });
 
+app.get('/prices/all',function(req,res){
+	db.prices.find({},function(err,doc){
+		res.json(doc);
+	})
+});
+
 app.get('/prices/:start/:end',function(req,res){
 	db.prices.find({start:req.params.start,end:req.params.end},function(err,doc){
 		res.json(doc);
@@ -66,24 +91,7 @@ app.get('/prices/:start/:end',function(req,res){
 
 function getDataFromUber(){
 	console.log('called',Date.now());
-	var routes =[{start:"lax", end:"dtla"},{start:"dtla", end:"lax"},
- {start:"lax", end:"sm"},{start:"sm", end:"lax"},
- {start:"lax", end:"hwd"},{start:"hwd", end:"lax"},
- {start:"dtla", end:"sm"},{start:"sm", end:"dtla"},
- {start:"dtla", end:"hwd"},{start:"hwd", end:"dtla"},
- {start:"sm", end:"hwd"},{start:"sm", end:"lax"},
- {start:"jfk", end:"gct"},{start:"gct", end:"jfk"},
- {start:"jfk", end:"aaal"},{start:"aaal", end:"jfk"},
- {start:"jfk", end:"brky"},{start:"brky", end:"jfk"},
- {start:"gct", end:"aaal"},{start:"aaal", end:"gct"},
- {start:"gct", end:"brky"},{start:"brky", end:"gct"},
- {start:"aaal", end:"brky"},{start:"aaal", end:"jfk"},
- {start:"sfo", end:"acs"},{start:"acs", end:"sfo"},
- {start:"sfo", end:"pwll"},{start:"pwll", end:"sfo"},
- {start:"sfo", end:"warf"},{start:"warf", end:"sfo"},
- {start:"acs", end:"pwll"},{start:"pwll", end:"acs"},
- {start:"acs", end:"warf"},{start:"warf", end:"acs"},
- {start:"pwll", end:"warf"},{start:"pwll", end:"sfo"}]
+	
 
 	async.each(routes,function(item){
 		console.log(item.start, item.end);
