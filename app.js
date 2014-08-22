@@ -43,7 +43,7 @@ db.points.insert({name:"Fishermans Warf (Pier 39)",slug:"warf",lat:"37.808119",l
 //Launch crawler
 app.get('/launch',function(req,res){
 	var rule = new schedule.RecurrenceRule();
-	rule.minute = new schedule.Range(0, 60, 1);
+	rule.minute = new schedule.Range(0, 60, 15);
 
 	var j = schedule.scheduleJob(rule, function () {
 	  // Do something
@@ -54,16 +54,24 @@ app.get('/launch',function(req,res){
 
 function getDataFromUber(){
 	console.log('called',Date.now());
-	var routes =[
-		{
-			start:"sfo",
-			end: "pwll"
-		},
-		{
-			start:"pwll",
-			end:"sfo"
-		}
-	]
+	var routes =[{start:"lax", end:"dtla"},{start:"dtla", end:"lax"},
+ {start:"lax", end:"sm"},{start:"sm", end:"lax"},
+ {start:"lax", end:"hwd"},{start:"hwd", end:"lax"},
+ {start:"dtla", end:"sm"},{start:"sm", end:"dtla"},
+ {start:"dtla", end:"hwd"},{start:"hwd", end:"dtla"},
+ {start:"sm", end:"hwd"},{start:"sm", end:"lax"},
+ {start:"jfk", end:"gct"},{start:"gct", end:"jfk"},
+ {start:"jfk", end:"aaal"},{start:"aaal", end:"jfk"},
+ {start:"jfk", end:"brky"},{start:"brky", end:"jfk"},
+ {start:"gct", end:"aaal"},{start:"aaal", end:"gct"},
+ {start:"gct", end:"brky"},{start:"brky", end:"gct"},
+ {start:"aaal", end:"brky"},{start:"aaal", end:"jfk"},
+ {start:"sfo", end:"acs"},{start:"acs", end:"sfo"},
+ {start:"sfo", end:"pwll"},{start:"pwll", end:"sfo"},
+ {start:"sfo", end:"warf"},{start:"warf", end:"sfo"},
+ {start:"acs", end:"pwll"},{start:"pwll", end:"acs"},
+ {start:"acs", end:"warf"},{start:"warf", end:"acs"},
+ {start:"pwll", end:"warf"},{start:"pwll", end:"sfo"}]
 
 	async.each(routes,function(item){
 		console.log(item.start, item.end);
@@ -114,25 +122,35 @@ function findPointInfo(slug,callback){
 	});
 }
 
+function launchSchedule(){
+	var rule = new schedule.RecurrenceRule();
+	rule.minute = new schedule.Range(0, 60, 15);
+
+	var j = schedule.scheduleJob(rule, function () {
+	  // Do something
+	  getDataFromUber();
+	});
+}
+
 
 var port = process.env.PORT || 3000;
 app.listen(port, function(req,res) {
   console.log("Listening on " + port);
 
-  var points =[]
+  // var points =[]
   // db.points.findOne({ slug: "sf_airport" }, function(err,doc){
   // 	console.log(doc)
   // 	console.log(err);
   // 	point.push(doc)
   // 	// return doc;
   // })
-  console.log(points)
+  // console.log(points)
 
-  findPointInfo("sf_airport",function(res){
-  	points.push(res);
-  	console.log(points);
-  })
+  // findPointInfo("sf_airport",function(res){
+  // 	points.push(res);
+  // 	console.log(points);
+  // })
 
-  getDataFromUber()
+  launchSchedule()
 
 });
