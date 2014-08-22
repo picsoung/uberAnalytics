@@ -52,9 +52,15 @@ app.get('/launch',function(req,res){
 	// res.end();
 });
 
+app.get('/point/:slug',function(req,res){
+	db.points.find({slug:req.params.slug},function(err,doc){
+		res.json(doc);
+	})
+});
+
 app.get('/prices/:start/:end',function(req,res){
 	db.prices.find({start:req.params.start,end:req.params.end},function(err,doc){
-		console.log(doc);
+		res.json(doc);
 	})
 });
 
