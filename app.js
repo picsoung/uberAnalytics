@@ -52,6 +52,12 @@ app.get('/launch',function(req,res){
 	// res.end();
 });
 
+app.get('/prices/:start/:end',function(req,res){
+	db.prices.find({start:req.params.start,end:req.params.end},function(err,doc){
+		console.log(doc);
+	})
+});
+
 function getDataFromUber(){
 	console.log('called',Date.now());
 	var routes =[{start:"lax", end:"dtla"},{start:"dtla", end:"lax"},
