@@ -76,7 +76,6 @@ app.get('/prices/:start/:end',function(req,res){
 
 function getDataFromUber(){
 	console.log('called',Date.now());
-	
 
 	async.each(routes,function(item){
 		console.log(item.start, item.end);
