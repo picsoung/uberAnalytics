@@ -17,13 +17,13 @@ db.prices = new Datastore({ filename: 'db/prices', autoload: true });
 
 var routes =[{start:"dtla", end:"sm"},{start:"sm", end:"dtla"},
 						 {start:"dtla", end:"hwd"},{start:"hwd", end:"dtla"},
-						 {start:"sm", end:"hwd"},
+						 {start:"sm", end:"hwd"},{start:"hwd", end:"sm"}
 						 {start:"gct", end:"aaal"},{start:"aaal", end:"gct"},
 						 {start:"gct", end:"brky"},{start:"brky", end:"gct"},
-						 {start:"aaal", end:"brky"},
+						 {start:"aaal", end:"brky"},{start:"brky", end:"aaal"},
 						 {start:"acs", end:"pwll"},{start:"pwll", end:"acs"},
 						 {start:"acs", end:"warf"},{start:"warf", end:"acs"},
-						 {start:"pwll", end:"warf"}];
+						 {start:"pwll", end:"warf"},{start:"warf", end:"pwll"}];
 
 app.get('/',function(req, res){
   res.render('index');  
