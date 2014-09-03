@@ -15,14 +15,14 @@ db.points = new Datastore({ filename: 'db/points', autoload: true });
 db.routes = new Datastore({ filename: 'db/routes', autoload: true });
 db.prices = new Datastore({ filename: 'db/prices', autoload: true });
 
-var routes =[{start:"dtla", end:"sm"},{start:"sm", end:"dtla"},
-						 {start:"dtla", end:"hwd"},{start:"hwd", end:"dtla"},
-						 {start:"sm", end:"hwd"},{start:"hwd", end:"sm"}
-						 {start:"gct", end:"aaal"},{start:"aaal", end:"gct"},
-						 {start:"gct", end:"brky"},{start:"brky", end:"gct"},
-						 {start:"aaal", end:"brky"},{start:"brky", end:"aaal"},
-						 {start:"acs", end:"pwll"},{start:"pwll", end:"acs"},
-						 {start:"acs", end:"warf"},{start:"warf", end:"acs"},
+var routes =[{start:"dtla", end:"smon"},{start:"smon", end:"dtla"},
+						 {start:"dtla", end:"hlwd"},{start:"hlwd", end:"dtla"},
+						 {start:"smon", end:"hlwd"},{start:"hlwd", end:"smon"},
+						 {start:"grct", end:"upma"},{start:"upma", end:"grct"},
+						 {start:"grct", end:"brok"},{start:"brok", end:"grct"},
+						 {start:"upma", end:"brok"},{start:"brok", end:"upma"},
+						 {start:"gogp", end:"pwll"},{start:"pwll", end:"gogp"},
+						 {start:"gogp", end:"warf"},{start:"warf", end:"gogp"},
 						 {start:"pwll", end:"warf"},{start:"warf", end:"pwll"}];
 
 app.get('/',function(req, res){
@@ -32,14 +32,14 @@ app.get('/',function(req, res){
 //Seed database
 app.get('/seed',function(req,res){
 	db.points.insert({name:"Downtown LA (Walt Disney Concert Hall)",slug:"dtla",lat:"34.055515",lon:"-118.250039"})
-	db.points.insert({name:"Santa Monica (Third Street Promenade)",slug:"sm",lat:"34.016243",lon:"-118.496159"})
-	db.points.insert({name:"Hollywood (Mann Theatres)",slug:"hwd",	lat:"34.102298",lon:"-118.340992"})
+	db.points.insert({name:"Santa Monica (Third Street Promenade)",slug:"smon",lat:"34.016243",lon:"-118.496159"})
+	db.points.insert({name:"Hollywood (Mann Theatres)",slug:"hlwd",	lat:"34.102298",lon:"-118.340992"})
 				
-	db.points.insert({name:"Manhattan (Grand Central Terminal)",slug:"gct",lat:"40.752466",lon:"-73.976886"})
-	db.points.insert({name:"Upper Manhattan (American Academy of Arts and Letters)",slug:"aaal",lat:"40.833721",lon:"-73.947461"})
-	db.points.insert({name:"Brooklyn (Barclays Center)",slug:"brky",lat:"40.682907",lon:"-73.975255"})
+	db.points.insert({name:"Manhattan (Grand Central Terminal)",slug:"grct",lat:"40.752466",lon:"-73.976886"})
+	db.points.insert({name:"Upper Manhattan (American Academy of Arts and Letters)",slug:"upma",lat:"40.833721",lon:"-73.947461"})
+	db.points.insert({name:"Brooklyn (Barclays Center)",slug:"brok",lat:"40.682907",lon:"-73.975255"})
 				
-	db.points.insert({name:"Golden Gate Park (California Academy of Sciences)",slug:"acs",lat:"37.770094",lon:"-122.466031"})
+	db.points.insert({name:"Golden Gate Park (California Academy of Sciences)",slug:"gogp",lat:"37.770094",lon:"-122.466031"})
 	db.points.insert({name:"Downtown SF (Powell & Market)",slug:"pwll",lat:"37.785114",lon:"-122.406677"})
 	db.points.insert({name:"Fishermans Warf (Pier 39)",slug:"warf",lat:"37.808119",lon:"-122.40911"})
 });
