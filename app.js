@@ -39,17 +39,24 @@ app.get('/seed',function(req,res){
 //Launch crawler
 app.get('/launch',function(req,res){
 	var rule = new schedule.RecurrenceRule();
-	rule.minute = new schedule.Range(0, 60, 10);
+	rule.minute = new schedule.Range(0, 60, 1);
 
 	var j = schedule.scheduleJob(rule, function () {
 	  // Do something
 	  getDataFromUber();
 	});
-	// res.end();
+	res.json('launched');
+	res.end();
 });
 
 app.get('/point/:slug',function(req,res){
 	db.points.find({slug:req.params.slug},function(err,doc){
+		res.json(doc);
+	})
+});
+
+app.get('/prices/delete',function(req,res){
+	db.prices.remove({}, { multi: true },function(err,doc){
 		res.json(doc);
 	})
 });
@@ -74,22 +81,52 @@ function getDataFromUber(){
 		var data_points=[];
 		var url =  "https://api.uber.com/v1/estimates/price"
 		url += "?"
-		findPointInfo(item.start,function(res){
-			console.log(res)
-			url += "start_latitude="
-		  	url += res.lat;
-		  	url += "&start_longitude="+res.lon
-		  	findPointInfo(item.end,function(res){
+		async.series({
+		    startPoint: function(callback){
+		        db.points.findOne({ slug: item.start },function(err,doc){
+					callback(null,doc);
+				});
+		    },
+		    endPoint: function(callback){
+		        db.points.findOne({ slug: item.end },function(err,doc){
+					callback(null,doc);
+				});
+		    }
+		},
+		function(err, results) {
+		    // results is now equal to: {startPoint: 1, endPoint: 2}
+		    if(results){
+		    	url += "start_latitude="
+			  	url += results.startPoint.lat;
+			  	url += "&start_longitude="+results.startPoint.lon
 			  	url += "&end_latitude="
-			  	url += res.lat;
-			  	url += "&end_longitude="+res.lon
+			  	url += results.startPoint.lat;
+			  	url += "&end_longitude="+results.startPoint.lon
 			  	url += "&server_token="+config.uber.server_token
-			  	console.log("last",url);
-			  	callUberAPI(url,item.start,item.end)
-			})
+			  	callUberAPI(url,item.start,item.end);
+			  	console.log(url);
+			}else if(err){
+			    console.log("ERROR",err);
+			}
+		});
+
+
+		// findPointInfo(item.start,function(res){
+		// 	console.log(res)
+		// 	url += "start_latitude="
+		//   	url += res.lat;
+		//   	url += "&start_longitude="+res.lon
+		//   	findPointInfo(item.end,function(res){
+		// 	  	url += "&end_latitude="
+		// 	  	url += res.lat;
+		// 	  	url += "&end_longitude="+res.lon
+		// 	  	url += "&server_token="+config.uber.server_token
+		// 	  	console.log("last",url);
+		// 	  	callUberAPI(url,item.start,item.end)
+		// 	})
 
 			
-		})
+		// })
 
 		
 		// console.log("point",findPointInfo(item.start));
@@ -117,7 +154,8 @@ function seedDB(){
 }
 
 function callUberAPI(url,start,end){
-	console.log("URRRRL",url)
+	console.log("called",start,end,moment.utc().format());
+	var result;
 	request(url, function (error, response, body) {
 	  if (!error && response.statusCode == 200) {
 	    console.log(body) // Print the google web page
