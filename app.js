@@ -39,7 +39,7 @@ app.get('/seed',function(req,res){
 //Launch crawler
 app.get('/launch',function(req,res){
 	var rule = new schedule.RecurrenceRule();
-	rule.minute = new schedule.Range(0, 60, 1);
+	rule.minute = new schedule.Range(0, 60, 10);
 
 	var j = schedule.scheduleJob(rule, function () {
 	  // Do something
