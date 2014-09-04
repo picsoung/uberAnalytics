@@ -15,24 +15,15 @@ db.points = new Datastore({ filename: 'db/points', autoload: true });
 db.routes = new Datastore({ filename: 'db/routes', autoload: true });
 db.prices = new Datastore({ filename: 'db/prices', autoload: true });
 
-var routes =[{start:"lax", end:"dtla"},{start:"dtla", end:"lax"},
- {start:"lax", end:"sm"},{start:"sm", end:"lax"},
- {start:"lax", end:"hwd"},{start:"hwd", end:"lax"},
- {start:"dtla", end:"sm"},{start:"sm", end:"dtla"},
- {start:"dtla", end:"hwd"},{start:"hwd", end:"dtla"},
- {start:"sm", end:"hwd"},{start:"sm", end:"lax"},
- {start:"jfk", end:"gct"},{start:"gct", end:"jfk"},
- {start:"jfk", end:"aaal"},{start:"aaal", end:"jfk"},
- {start:"jfk", end:"brky"},{start:"brky", end:"jfk"},
- {start:"gct", end:"aaal"},{start:"aaal", end:"gct"},
- {start:"gct", end:"brky"},{start:"brky", end:"gct"},
- {start:"aaal", end:"brky"},{start:"aaal", end:"jfk"},
- {start:"sfo", end:"acs"},{start:"acs", end:"sfo"},
- {start:"sfo", end:"pwll"},{start:"pwll", end:"sfo"},
- {start:"sfo", end:"warf"},{start:"warf", end:"sfo"},
- {start:"acs", end:"pwll"},{start:"pwll", end:"acs"},
- {start:"acs", end:"warf"},{start:"warf", end:"acs"},
- {start:"pwll", end:"warf"},{start:"pwll", end:"sfo"}]
+var routes =[{start:"dtla", end:"smon"},{start:"smon", end:"dtla"},
+						 {start:"dtla", end:"hlwd"},{start:"hlwd", end:"dtla"},
+						 {start:"smon", end:"hlwd"},{start:"hlwd", end:"smon"},
+						 {start:"grct", end:"upma"},{start:"upma", end:"grct"},
+						 {start:"grct", end:"brok"},{start:"brok", end:"grct"},
+						 {start:"upma", end:"brok"},{start:"brok", end:"upma"},
+						 {start:"gogp", end:"pwll"},{start:"pwll", end:"gogp"},
+						 {start:"gogp", end:"warf"},{start:"warf", end:"gogp"},
+						 {start:"pwll", end:"warf"},{start:"warf", end:"pwll"}];
 
 app.get('/',function(req, res){
   res.render('index');  
@@ -146,7 +137,7 @@ function findPointInfo(slug,callback){
 
 function launchSchedule(){
 	var rule = new schedule.RecurrenceRule();
-	rule.minute = new schedule.Range(0, 60, 15);
+	rule.minute = new schedule.Range(0, 60, 10);
 
 	var j = schedule.scheduleJob(rule, function () {
 	  // Do something
