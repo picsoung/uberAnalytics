@@ -5,8 +5,15 @@ var moment = require('moment');
 var db = {};
 var schedule = require('node-schedule');
 var request = require('request');
+var Keen = require('keen.io');
+var _ = require('underscore');
 
 var config = require('./config');
+
+var client = Keen.configure({
+    projectId: config.keen.projectId,
+    writeKey: config.keen.writeKey
+});
 
 var app = express();
 
@@ -19,6 +26,14 @@ db.prices = new Datastore({ filename: 'db/prices', autoload: true });
 // db.points.ensureIndex({ fieldName: 'slug', unique: true }, function (err) {
 // 	console.log("aahahha");
 // });
+
+app.all('*', function(req, res, next){
+  if (!req.get('Origin')) return next();
+  // use "*" here to accept any origin
+  res.set('Access-Control-Allow-Origin', '*');
+  // res.set('Access-Control-Allow-Max-Age', 3600);
+  next();
+});
 
 var routes =[{start:"dtla", end:"smon"},{start:"smon", end:"dtla"},
 			 {start:"dtla", end:"hlwd"},{start:"hlwd", end:"dtla"},
@@ -95,6 +110,7 @@ app.get('/prices/delete',function(req,res){
 });
 
 app.get('/prices/all',function(req,res){
+	res.set('Access-Control-Allow-Origin', '*	');
 	db.prices.find({},function(err,doc){
 		res.json(doc);
 	})
@@ -177,7 +193,31 @@ function callUberAPI(url,start,end){
 	request(url, function (error, response, body) {
 	  if (!error && response.statusCode == 200) {
 	    console.log(body) // Print the google web page
-	    db.prices.insert({start:start,end:end,date:moment.utc().format(),prices:JSON.parse(body).prices})
+	    var prices = JSON.parse(body).prices;
+	    db.prices.insert({start:start,end:end,date:moment.utc().format(),prices:prices})
+	    
+	    _.each(prices,function(item){
+	    	var ev = {
+	    		start:start,
+	    		end:end,
+	    		date:moment.utc().format(),
+	    		localized_display_name:item.localized_display_name,
+	    		display_name:item.display_name,
+	    		high_estimate: item.high_estimate,
+                low_estimate: item.low_estimate,
+	            surge_multiplier: item.surge_multiplier,
+	            estimate: item.estimate,
+	            currency_code: item.currency_code
+	        }
+	        client.addEvent("pricesCollection", ev, function(err, res) {
+			    if (err) {
+			        console.log("Oh no, an error!");
+			    } else {
+			        console.log("Hooray, it worked!");
+			    }
+			});
+	    })
+	    
 	  }
 	})
 }
